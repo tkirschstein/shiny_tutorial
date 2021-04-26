@@ -9,6 +9,7 @@ output:
     widescreen: true
     smaller: true
     self_contained: true
+    incremental: false
 runtime: shiny
 ---
 
@@ -17,25 +18,69 @@ knitr::opts_chunk$set(echo = FALSE)
 library(png)
 library(lubridate)
 library(tidyverse)
-#library(optimx)
 library(DT)
 library(knitr)
 library(kableExtra)
 library(shiny)
-
 ```
 
-## R Markdown
 
-This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Gliederung 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+1. Einleitung
+2. Aufbau & Struktur von Shiny Apps
+3. Reaktivität & Interaktivität
+4. Data Wrangling
+5. Plotly & Leaflet
 
-## Slide with Bullets
+# Einleitung 
+## Allgemeines & Ziel
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
+> <font size="5.5">Shiny ist ein R-Paket zur Programmierung interaktiver Web-Applikationen.</font>
+
+<br>
+
+<div class="columns-2">
+
+<font size="5">**Eigenschaften**:</font>
+
+- nutzt R um Daten aufzubereiten und zu verarbeiten
+- bietet Funktionen zum Umwandeln von R-Objekten in HTML-Objekten (HTML-Code kann auch direkt verarbeitet werden)
+- reaktive Programmierung:  (User-)Input -> Verarbeitung -> Output
+
+
+<br>
+
+<font size="5">**Ziele für heute**:</font>
+
+> - grundlegende Funktionsweise & Elemente 
+> - Grundstrukturen reaktiver Programmierung 
+> - Datenhandling (dynamisch vs. interaktiv, rhandsontables) 
+> - hübsche Plots & Karten mit Plotly & Leaflet
+> - alle Skripte und Inhalte verfügbar unter https://github.com/tkirschstein/shiny_tutorial
+
+```{r, out.width = "99%", echo=F, fig.cap="Beispielapps"}
+include_graphics("figures/examples_shiny.png")
+```
+[Shiny Gallery](https://shiny.rstudio.com/gallery/)
+</div>
+
+## Getting started
+
+### Installation
+
+```{r eval=FALSE, echo=TRUE, include=TRUE}
+install.packages("shiny")
+library(shiny)
+```
+
+### Grundstruktur von Shiny apps
+
+```{r, out.width = "80%", echo=F, fig.cap="Struktur von shiny apps", fig.align='center'}
+include_graphics("figures/struktur_shiny.png")
+```
+
+# Aufbau & Struktur von Shiny Apps 
 
 ## Slide with R Output
 
@@ -56,6 +101,10 @@ renderPlot({
   lines(dens, col = "blue")
 })
 ```
+
+<!-- New chapter -->
+
+# Reaktivität & Interaktivität
 
 ## Slide with Plot
 
@@ -81,14 +130,27 @@ ui <- fluidPage(
 
 server <- function(input, output) {
 
-  output$distPlot <- renderPlot({
-    x    <- faithful$waiting
-    bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    values <<- reactiveValues(y = 31)
+    
+    observe({
+        values$y <<- input$bins + 1
+    })
+    
+    observe({
+    
+    output$distPlot <- renderPlot({
+        
+        # generate bins based on input$bins from ui.R
+        x    <- faithful[, 2]
+        
+        bins <- seq(min(x), max(x), length.out = values$y)
 
-    hist(x, breaks = bins, col = "#75AADB", border = "white",
-         xlab = "Waiting time to next eruption (in mins)",
-         main = "Histogram of waiting times")
-  })
+        # draw the histogram with the specified number of bins
+        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+
+    })
+    })
+    
 }
 
 shinyApp(ui = ui, server = server)
@@ -119,31 +181,5 @@ renderPlot({
 })
 ```
 
-## 2-column design
-
-<div class="columns-2">
-
-```{r echo = TRUE}
-inputPanel(
-selectInput("n_breaks3", label = "Number of bins:",
-              choices = c(10, 20, 35, 50), selected = 20),
-sliderInput("bw_adjust3", label = "Bandwidth adjustment:",
-              min = 0.2, max = 2, value = 1, step = 0.2)
-)
-```
-
-
-
-```{r echo = FALSE}
-renderPlot({
-  hist(faithful$eruptions, probability = TRUE,
-       breaks = as.numeric(input$n_breaks3),
-       xlab = "Duration (minutes)",
-       main = "Geyser eruption duration")
-
-  dens <- density(faithful$eruptions, adjust = input$bw_adjust3)
-  lines(dens, col = "blue")
-})
-```
-</div>
+## 2-column design {.columns-2}
 
