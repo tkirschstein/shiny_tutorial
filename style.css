@@ -25,3 +25,16 @@ slides > slide {
 iframe {
   height: 800px;
 }
+
+<style>
+.leaflet-control-layers-selector {
+  width: auto;
+  height: 800px;
+}
+</style>
+
+<style>
+.small-code pre code {
+  font-size: .5em;
+}
+</style
