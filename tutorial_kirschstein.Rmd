@@ -113,6 +113,58 @@ include_graphics("figures/quellen_shiny.png")
 ```
 # Aufbau von Shiny Apps 
 
+## Layouts
+
+```{r, out.width = "85%", echo=F, fig.cap="Layout von Shiny apps (https://mastering-shiny.org/action-layout.html)", fig.align='center'}
+include_graphics("figures/shiny_layouts.png")
+```
+
+
+## Elemente in Server und UI {.build}
+
+```{r, out.width = "55%", echo=F, fig.cap="Struktur von shiny apps", fig.align='center'}
+include_graphics("figures/shiny_struktur.png")
+```
+
+<div class="columns-2">
+
+### Syntax Input-Elemente
+
+UI-Input-Element: `<Typ>Input("<In-ID>", ...)` <-> Server-Zugriff: `input$<In-ID>`
+
++-------------------+-------------------+
+| UI-Input-Element  | Output-Typ        |
++===================+===================+
+| `textInput()`     | `character`       |
++-------------------+-------------------+
+| `sliderInput()`   | `numeric`         |
++-------------------+-------------------+
+| `numericInput()`  | `numeric`         |
++-------------------+-------------------+
+| ...               | ...               |
++-------------------+-------------------+
+
+
+### Syntax Output-Verbindung
+
+UI-Output-Element: `<Typ>Output("<OutID>")` <-> Server-Partner: `output$<OutID> <- render<Typ>({<Code>})`
+
++-------------------+-------------------+
+| UI-Output-Element | Server-Partner    |
++===================+===================+
+| `textOutput()`    | `renderText()`    |
++-------------------+-------------------+
+| `plotOutput()`    | `renderPlot()`    |
++-------------------+-------------------+
+| `tableOutput()`   | `renderTable()`   |
++-------------------+-------------------+
+| ...               | ...               |
++-------------------+-------------------+
+
+
+</div>
+
+
 # Reaktivität & Interaktivität
 
 ## Direkte Interaktion
